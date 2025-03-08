@@ -1,8 +1,5 @@
 from django.shortcuts import render, HttpResponse,redirect
 
-
-# Create your views here.
-
 data = []
 counter = 0
 def add_trainee(request):
@@ -16,9 +13,8 @@ def add_trainee(request):
         trainee_data['phone'] = request.POST.get('phone')
         trainee_data['address'] = request.POST.get('address')
         data.append(trainee_data)
-        for d in data:
-            print(d)
-        return HttpResponse("success")
+
+
     return render(request, 'add_trainee.html')
 
 def retrive_trainee(request):
