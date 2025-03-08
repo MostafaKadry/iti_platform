@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+
+<title>{% block title %}Course List{% endblock %}</title>
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course List</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -106,8 +102,8 @@
             background: #0056b3;
         }
     </style>
-</head>
-<body>
+
+
     <h1>Course List</h1>
     <a href="{% url 'add_courses' %}" class="btn-add">Add New Course</a>
     <div class="course-container">
@@ -134,7 +130,5 @@
             <h3>There are no courses here!</h3>
     {% endif %}
     </div>
-</body>
-</html>
-
 {% endblock %}
+

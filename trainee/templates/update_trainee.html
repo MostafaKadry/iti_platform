@@ -1,24 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
+<title>{% block title %} Update Trainee{% endblock %}</title>
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Trainee</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
             margin: 0;
         }
 
         .container {
+            margin: 3rem auto;
             background: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -70,8 +64,7 @@
             background-color: #218838;
         }
     </style>
-</head>
-<body>
+
     <div class="container">
         <h1>Update Trainee</h1>
         <form method="post">
@@ -91,6 +84,5 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-</body>
-</html>
+
 {% endblock %}
