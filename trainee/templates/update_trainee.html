@@ -67,7 +67,7 @@
 
     <div class="container">
         <h1>Update Trainee</h1>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" value="{{ trainee.name }}" required>
@@ -77,6 +77,9 @@
 
             <label for="phone">Phone:</label>
             <input type="text" id="phone" name="phone" value="{{ trainee.phone }}" required>
+
+            <label for="image">User Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" value="{{ trainee.image }}" required>
 
             <label for="address">Address:</label>
             <input type="text" id="address" name="address" value="{{ trainee.address }}" />

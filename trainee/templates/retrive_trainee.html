@@ -28,8 +28,10 @@
     <h1>Trainee List</h1>
     {% if data|length > 0 %}
       {% for d in data %}
+
         <div class="trainee-details">
           <h2>Trainee Details</h2>
+          <img src='http://localhost:8000/media/{{ d.image }}' alt="Trainee Image" width="100px" height="100px" />
           <p><strong>Name:</strong> {{ d.name }}</p>
           <p><strong>Email:</strong> {{ d.email }}</p>
           <p><strong>Phone:</strong> {{ d.phone }}</p>
@@ -49,5 +51,8 @@
     {% else %}
       <h2>No trainee added</h2>
     {% endif %}
-
+    <h2 style="text-align: center;">
+    <a href="{% url 'add_trainee' %}">Add New Trainee</a>
+    </h2>
 {% endblock %}
+
