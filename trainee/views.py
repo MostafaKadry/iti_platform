@@ -3,7 +3,7 @@ from .models import Trainee
 from course.models import Course
 import os
 def retrive_trainee(request):
-    trainee_data = Trainee.objects.all().values()
+    trainee_data = Trainee.objects.all()
     return render(request, 'retrive_trainee.html', {'data': trainee_data})
 
 def add_trainee(request):
