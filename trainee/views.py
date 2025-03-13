@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse,redirect
+from django.shortcuts import render, HttpResponse,redirect, get_object_or_404
 from .models import Trainee
 data = []
 counter = 0
@@ -9,8 +9,6 @@ def add_trainee(request):
     if request.method == 'POST':
         uploaded_file = request.FILES.get('image')
 
-        print(f"Uploaded file type: {type(uploaded_file)}")
-        print(f"Uploaded file : {uploaded_file}")
         Trainee.objects.create(name=request.POST.get('name'), email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'))
     return render(request, 'add_trainee.html')
 
@@ -22,7 +20,7 @@ def delete_trainee(request, id):
     return HttpResponse("failed", status=400)
 
 def update_trainee(request, id):
-    trainee = Trainee.objects.get(id=id)
+    trainee = get_object_or_404(Trainee, id=id)
 
     if not trainee:
         return HttpResponse("Trainee not found", status=404)
@@ -33,6 +31,7 @@ def update_trainee(request, id):
         trainee.phone = request.POST.get('phone')
         trainee.address = request.POST.get('address')
         trainee.image = request.FILES.get('image')
+        trainee.save()
         return redirect(retrive_trainee)
     return render(request, 'update_trainee.html', {'trainee': trainee})
 

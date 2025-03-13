@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .models import Course
+from .templates.model_form import CourseForm
 # Create your views here.
 
 def retrieve_courses(request):
@@ -7,10 +8,12 @@ def retrieve_courses(request):
     return render(request, "all_courses.html", {"courses": c_data})
 def add_courses(request):
     if request.method == 'POST':
-        new_course = Course(name=request.POST.get('name'), track=request.POST.get('track'), hours=request.POST.get('hours'))
-        new_course.save()
-        return redirect(add_courses)
-    return render(request, 'course_form.html')
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(add_courses)
+    else:
+        return render(request, 'course_form.html', {'CourseForm': CourseForm()})
 def delete_courses(request, id):
     if request.method == 'POST':
         course = Course.objects.get(id=id)

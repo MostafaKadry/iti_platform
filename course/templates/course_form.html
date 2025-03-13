@@ -106,18 +106,10 @@
 
     <div class="container">
         <h1>Add New Course</h1>
-        <form method="post">
+        <form method="POST">
             {% csrf_token %}
-            <label for="name">Course Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter course name" required>
-
-            <label for="track">Track:</label>
-            <input type="text" id="track" name="track" placeholder="Enter course track" required>
-
-            <label for="hours">Hours:</label>
-            <input type="number" id="hours" name="hours" placeholder="Enter course hours" required>
-
-            <button type="submit">Submit</button>
+            {{ CourseForm.as_p }}
+                <button type="submit">submit</button>
         </form>
     </div>
 
