@@ -12,7 +12,6 @@ def add_trainee(request):
         enrolled_course_id = request.POST.get("course")
         if enrolled_course_id:
             enrolled_course = Course.get_course_by_id(enrolled_course_id)
-            print('\n\n',type(enrolled_course), '\n\n')
             Trainee.add_trainee(name=request.POST.get('name'),email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
         # uploaded_file = request.FILES.get('image')
 
