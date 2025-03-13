@@ -36,6 +36,7 @@
           <p><strong>Email:</strong> {{ d.email }}</p>
           <p><strong>Phone:</strong> {{ d.phone }}</p>
           <p><strong>Address:</strong> {{ d.address }}</p>
+          <p><strong>Enrolled Course:</strong> {{ d.course.name }}</p>
 
           <form action="{% url 'delete_trainee' d.id %}" method="post" style="display: inline;">
             {% csrf_token %}

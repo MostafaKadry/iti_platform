@@ -1,16 +1,22 @@
 from django.shortcuts import render, HttpResponse,redirect, get_object_or_404
 from .models import Trainee
-data = []
-counter = 0
+from course.models import Course
+
 def retrive_trainee(request):
     trainee_data = Trainee.objects.all().values()
     return render(request, 'retrive_trainee.html', {'data': trainee_data})
-def add_trainee(request):
-    if request.method == 'POST':
-        uploaded_file = request.FILES.get('image')
 
-        Trainee.objects.create(name=request.POST.get('name'), email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'))
-    return render(request, 'add_trainee.html')
+def add_trainee(request):
+    courses = Course.get_all_courses()
+    if request.method == 'POST':
+        enrolled_course_id = request.POST.get("course")
+        if enrolled_course_id:
+            enrolled_course = Course.get_course_by_id(enrolled_course_id)
+            print('\n\n',type(enrolled_course), '\n\n')
+            Trainee.add_trainee(name=request.POST.get('name'),email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
+        # uploaded_file = request.FILES.get('image')
+
+    return render(request, 'add_trainee.html', {"courses": courses})
 
 def delete_trainee(request, id):
     if request.method == 'POST':

@@ -20,17 +20,19 @@ def delete_courses(request, id):
         course.delete()
         return redirect(retrieve_courses)
     return HttpResponse("failed", status=400)
+
 def update_courses(request, id):
-    course = Course.objects.get(id=id)
+    course = Course.get_course_by_id(id)
 
     if not course:
         return HttpResponse("Trainee not found", status=404)
 
     if request.method == 'POST':
-        course.name = request.POST.get('name')
-        course.track = request.POST.get('track')
-        course.hours = request.POST.get('hours')
-        course.save()
-        return redirect(retrieve_courses)
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect(retrieve_courses)
+    old_course = CourseForm(instance=course)
+    return render(request, 'update_course.html', {'course': old_course})
 
-    return render(request, 'update_course.html', {'course': course})
+
