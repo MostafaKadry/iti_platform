@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse,redirect, get_object_or_404
 from .models import Trainee
 from course.models import Course
-
+import os
 def retrive_trainee(request):
     trainee_data = Trainee.objects.all().values()
     return render(request, 'retrive_trainee.html', {'data': trainee_data})
@@ -20,6 +20,9 @@ def add_trainee(request):
 def delete_trainee(request, id):
     if request.method == 'POST':
         trainee_data = Trainee.objects.get(id=id)
+        old_image_path = os.path.join(trainee_data.image.path)
+        if os.path.exists(old_image_path):
+            os.remove(old_image_path)
         trainee_data.delete()
         return redirect(retrive_trainee)
     return HttpResponse("failed", status=400)
