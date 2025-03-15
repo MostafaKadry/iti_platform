@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>{% block title %}Course List{% endblock %}</title>
+{% block content %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .course-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .course-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-card h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #444;
+        }
+
+        .course-card p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-update {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-add {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: #0056b3;
+        }
+    </style>
+
+
+    <h1>Course List</h1>
+    <a href="{% url 'add_courses' %}" class="btn-add">Add New Course</a>
+    <div class="course-container">
+    {% if courses|length > 0 %}
+        {% for course in courses %}
+        <div class="course-card">
+            <h2>{{ course.name }}</h2>
+            <p><strong>Track:</strong> {{ course.track }}</p>
+            <p><strong>Hours:</strong> {{ course.hours }}</p>
+            <div class="btn-group">
+
+                  <form action="{% url 'update_course' course.id %}" method="get" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-update">Update</button>
+                </form>
+                <form action="{% url 'delete_course' course.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+            <h3>There are no courses here!</h3>
+    {% endif %}
+    </div>
+{% endblock %}
+
