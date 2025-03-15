@@ -3,6 +3,8 @@ from .models import Trainee
 from course.models import Course
 import os
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.views import View
 
 class TrainerListView(ListView):
     model = Trainee
@@ -13,22 +15,49 @@ class TrainerListView(ListView):
 #     trainee_data = Trainee.objects.all()
 #     return render(request, 'retrive_trainee.html', {'data': trainee_data})
 
-class TraineeCreateView(CreateView):
-    model = Trainee
-    # form_class = ''
-    template_name = 'add_trainee.html'
-    success_url = '/get_trainee/'
+# Class Based View
+class TraineeCreateView(View):
 
-def add_trainee(request):
-    courses = Course.get_all_courses()
-    if request.method == 'POST':
+    template_name = 'add_trainee.html'
+    success_url = reverse_lazy('get_trainee')
+
+    def get(self, request):
+
+        courses = Course.get_all_courses()
+        return render(request, self.template_name, {"courses": courses})
+
+    def post(self, request, *args, **kwargs):
         enrolled_course_id = request.POST.get("course")
+
         if enrolled_course_id:
             enrolled_course = Course.get_course_by_id(enrolled_course_id)
-            Trainee.add_trainee(name=request.POST.get('name'),email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
-        # uploaded_file = request.FILES.get('image')
+            Trainee.add_trainee(name=request.POST.get('name'), email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
+            return redirect(self.success_url)
 
-    return render(request, 'add_trainee.html', {"courses": courses})
+# def add_trainee(request):
+#     courses = Course.get_all_courses()
+#     if request.method == 'POST':
+#         enrolled_course_id = request.POST.get("course")
+#         if enrolled_course_id:
+#             enrolled_course = Course.get_course_by_id(enrolled_course_id)
+#             Trainee.add_trainee(name=request.POST.get('name'),email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
+#
+#     return render(request, 'add_trainee.html', {"courses": courses})
+
+
+# Generic view
+class TraineeDeleteView(DeleteView):
+    model = Trainee
+    success_url = reverse_lazy('get_trainee')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        old_image_path = self.object.image.path
+        if os.path.exists(old_image_path):
+            os.remove(old_image_path)
+
+        return super().post(request, *args, **kwargs)
+
 
 def delete_trainee(request, id):
     if request.method == 'POST':
@@ -37,7 +66,7 @@ def delete_trainee(request, id):
         if os.path.exists(old_image_path):
             os.remove(old_image_path)
         trainee_data.delete()
-        return redirect(retrive_trainee)
+        return redirect('get_trainee')
     return HttpResponse("failed", status=400)
 
 def update_trainee(request, id):
@@ -53,7 +82,7 @@ def update_trainee(request, id):
         trainee.address = request.POST.get('address')
         trainee.image = request.FILES.get('image')
         trainee.save()
-        return redirect(retrive_trainee)
+        return redirect('get_trainee')
     return render(request, 'update_trainee.html', {'trainee': trainee})
 
 

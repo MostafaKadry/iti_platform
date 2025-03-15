@@ -3,11 +3,20 @@
 <title>{% block title %}Trainee List{% endblock %}</title>
 {% block content %}
     <style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
         .trainee-details {
             border: 1px solid #ccc;
             padding: 20px;
-            margin-bottom: 20px;
             background-color: #f9f9f9;
+            margin: 20px;
+            width: 25%;
+
         }
         .trainee-details h2 {
             margin-top: 0;
@@ -24,35 +33,37 @@
         }
     </style>
     <h1>Trainee List</h1>
-    {% if data|length > 0 %}
-      {% for d in data %}
 
-        <div class="trainee-details">
-          <h2>Trainee Details</h2>
-          <img src='/media/{{ d.image }}' alt="Trainee Image" width="100px" height="100px" />
-          <p><strong>Name:</strong> {{ d.name }}</p>
-          <p><strong>Email:</strong> {{ d.email }}</p>
-          <p><strong>Phone:</strong> {{ d.phone }}</p>
-          <p><strong>Address:</strong> {{ d.address }}</p>
+<div class="container">
+  {% if data|length > 0 %}
+    {% for d in data %}
+      <div class="trainee-details">
+        <h2>Trainee Details</h2>
+        <img src='/media/{{ d.image }}' alt="Trainee Image" width="100px" height="100px" />
+        <p><strong>Name:</strong> {{ d.name }}</p>
+        <p><strong>Email:</strong> {{ d.email }}</p>
+        <p><strong>Phone:</strong> {{ d.phone }}</p>
+        <p><strong>Address:</strong> {{ d.address }}</p>
+        <p><strong>Enrolled Course:</strong> {{ d.course.name }}</p>
 
-          <p><strong>Enrolled Course:</strong> {{ d.course.name }}</p>
+        <form action="{% url 'delete_trainee' d.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="delete-btn">Delete</button>
+        </form>
 
-          <form action="{% url 'delete_trainee' d.id %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="delete-btn">Delete</button>
-          </form>
+        <form action="{% url 'update_trainee' d.id %}" method="GET" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="update-btn">Update</button>
+        </form>
+      </div>
+    {% endfor %}
+  {% else %}
+    <h2>No trainee added</h2>
+  {% endif %}
 
-          <form action="{% url 'update_trainee' d.id %}" method="GET" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="update-btn">update</button>
-          </form>
-        </div>
-      {% endfor %}
-    {% else %}
-      <h2>No trainee added</h2>
-    {% endif %}
-    <h2 style="text-align: center;">
+  <h2 style="text-align: center;">
     <a href="{% url 'add_trainee' %}">Add New Trainee</a>
-    </h2>
+  </h2>
+</div>
 {% endblock %}
 
