@@ -17,12 +17,10 @@ class TrainerListView(ListView):
 
 # Class Based View
 class TraineeCreateView(View):
-
     template_name = 'add_trainee.html'
     success_url = reverse_lazy('get_trainee')
 
     def get(self, request):
-
         courses = Course.get_all_courses()
         return render(request, self.template_name, {"courses": courses})
 
@@ -59,31 +57,57 @@ class TraineeDeleteView(DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-def delete_trainee(request, id):
-    if request.method == 'POST':
-        trainee_data = Trainee.objects.get(id=id)
-        old_image_path = os.path.join(trainee_data.image.path)
-        if os.path.exists(old_image_path):
-            os.remove(old_image_path)
-        trainee_data.delete()
-        return redirect('get_trainee')
-    return HttpResponse("failed", status=400)
+# def delete_trainee(request, id):
+#     if request.method == 'POST':
+#         trainee_data = Trainee.objects.get(id=id)
+#         old_image_path = os.path.join(trainee_data.image.path)
+#         if os.path.exists(old_image_path):
+#             os.remove(old_image_path)
+#         trainee_data.delete()
+#         return redirect('get_trainee')
+#     return HttpResponse("failed", status=400)
 
-def update_trainee(request, id):
-    trainee = get_object_or_404(Trainee, id=id)
+class TraneeUpdateView(UpdateView):
+    model = Trainee
+    success_url = reverse_lazy('get_trainee')
+    template_name = 'update_trainee.html'
 
-    if not trainee:
-        return HttpResponse("Trainee not found", status=404)
+    def get(self, request, id):
+        trainee = get_object_or_404(Trainee, id=id)
+        return render(request, self.template_name, {'trainee': trainee})
 
-    if request.method == 'POST':
+    def post(self, request, id):
+        trainee = get_object_or_404(Trainee, id=id)
+
         trainee.name = request.POST.get('name')
         trainee.email = request.POST.get('email')
         trainee.phone = request.POST.get('phone')
         trainee.address = request.POST.get('address')
-        trainee.image = request.FILES.get('image')
+
+        if 'image' in request.FILES:
+            if trainee.image and os.path.exists(trainee.image.path):
+                os.remove(trainee.image.path)
+            trainee.image = request.FILES.get('image')
+
         trainee.save()
-        return redirect('get_trainee')
-    return render(request, 'update_trainee.html', {'trainee': trainee})
+        return redirect(self.success_url)
+
+
+
+# def update_trainee(request, id):
+#     trainee = get_object_or_404(Trainee, id=id)
+#
+#     if not trainee:
+#         return HttpResponse("Trainee not found", status=404)
+#
+#     if request.method == 'POST':
+#         trainee.name = request.POST.get('name')
+#         trainee.email = request.POST.get('email')
+#         trainee.phone = request.POST.get('phone')
+#         trainee.address = request.POST.get('address')
+#         trainee.image = request.FILES.get('image')
+#
+#     return render(request, 'update_trainee.html', {'trainee': trainee})
 
 
 
