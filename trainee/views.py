@@ -1,10 +1,15 @@
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, HttpResponse,redirect, get_object_or_404
+
+from .login_trainee_form import LoginForm
 from .models import Trainee
 from course.models import Course
 import os
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views import View
+
+from django.contrib.auth import authenticate, login, logout
 
 class TrainerListView(ListView):
     model = Trainee
@@ -29,7 +34,7 @@ class TraineeCreateView(View):
 
         if enrolled_course_id:
             enrolled_course = Course.get_course_by_id(enrolled_course_id)
-            Trainee.add_trainee(name=request.POST.get('name'), email=request.POST.get('email'), phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
+            Trainee.add_trainee(name=request.POST.get('name'), email=request.POST.get('email'), password=request.POST.get('password'),phone=request.POST.get('phone'), address=request.POST.get('address'), image=request.FILES.get('image'), course=enrolled_course)
             return redirect(self.success_url)
 
 # def add_trainee(request):
@@ -93,7 +98,6 @@ class TraneeUpdateView(UpdateView):
         return redirect(self.success_url)
 
 
-
 # def update_trainee(request, id):
 #     trainee = get_object_or_404(Trainee, id=id)
 #
@@ -110,4 +114,21 @@ class TraneeUpdateView(UpdateView):
 #     return render(request, 'update_trainee.html', {'trainee': trainee})
 
 
+class TraineeLoginView(View):
+    def get(self, request):
+        context = {"form": LoginForm()}
+        return render(request, 'login_trainee.html', context)
 
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        try:
+            logged_user = Trainee.objects.get(email=email)
+        except Trainee.DoesNotExist:
+            return HttpResponse("Trainee not found", status=401)
+
+        if logged_user.check_password(password):
+            request.session['logged_user'] = logged_user.id
+            return redirect('get_trainee')
+        else:
+            return HttpResponse("Invalid password", status=401)
