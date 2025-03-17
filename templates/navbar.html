@@ -6,6 +6,11 @@
             <li><a href="/">Home</a></li>
             <li><a href="{% url 'retrieve_courses' %}">Courses</a></li>
             <li><a href="{% url 'get_trainee' %}">Trainees</a></li>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout">Logout</button>
+            </form>
+
         </ul>
         <div class="navbar-toggle" id="mobile-menu">
             <span class="bar"></span>

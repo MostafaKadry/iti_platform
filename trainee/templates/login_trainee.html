@@ -10,7 +10,7 @@
 
         }
 
-        form {
+        .login-form {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -26,7 +26,7 @@
             color: #333;
         }
 
-        input[type="text"],
+        .login-form input[type="text"],
         input[type="password"] {
             width: 95%;
             padding: 10px;
@@ -42,7 +42,7 @@
             outline: none;
         }
 
-        button[type="submit"] {
+        .login-form button[type="submit"] {
             width: 100%;
             padding: 10px;
             background-color: #007bff;
@@ -53,17 +53,17 @@
             cursor: pointer;
         }
 
-        button[type="submit"]:hover {
+        .login-form button[type="submit"]:hover {
             background-color: #0056b3;
         }
     </style>
 
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data" class="login-form">
         {% csrf_token %}
         <h2 style="text-align: center">Login Trainee</h2>
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
+        <label for="email">Username:</label>
+        <input type="text" name="email" required>
 
         <label for="password">Password:</label>
         <input type="password" name="password" required>

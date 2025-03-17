@@ -38,7 +38,7 @@ class Trainee(models.Model):
                 old_image_path = os.path.join(old_profile.image.path)
                 if os.path.exists(old_image_path):
                     os.remove(old_image_path)
-        super().save(*args, **kwargs)
+
         # Create new Trainee, Hash password before saving
         if not self.pk or not Trainee.objects.filter(pk=self.pk).exists():
             self.password = make_password(self.password)
