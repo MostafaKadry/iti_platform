@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .models import Course
 from course.model_form import CourseForm
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 
+# Create your views here.
+@login_required()
 def retrieve_courses(request):
     c_data = Course.objects.all().values()
     return render(request, "all_courses.html", {"courses": c_data})
+
+@login_required()
 def add_courses(request):
     if request.method == 'POST':
         form = CourseForm(request.POST)
@@ -14,6 +18,7 @@ def add_courses(request):
             return redirect(add_courses)
     else:
         return render(request, 'course_form.html', {'CourseForm': CourseForm()})
+@login_required()
 def delete_courses(request, id):
     if request.method == 'POST':
         course = Course.objects.get(id=id)
@@ -21,6 +26,7 @@ def delete_courses(request, id):
         return redirect(retrieve_courses)
     return HttpResponse("failed", status=400)
 
+@login_required()
 def update_courses(request, id):
     course = Course.get_course_by_id(id)
 
