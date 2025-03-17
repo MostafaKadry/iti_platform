@@ -5,4 +5,4 @@ class LoginForm(forms.ModelForm):
 
     class Meta:
         model = Trainee
-        fields = ['email', 'password']
+        fields = ['username', 'password']

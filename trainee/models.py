@@ -4,7 +4,7 @@ import os
 from django.contrib.auth.hashers import make_password, check_password
 # Create your models here.
 class Trainee(models.Model):
-    name = models.CharField(max_length=70)
+    username = models.CharField(max_length=70, unique=True, null=False)
     email = models.EmailField()
     password = models.CharField(max_length=500)
     phone = models.CharField(max_length=11)
@@ -13,13 +13,13 @@ class Trainee(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     @classmethod
-    def add_trainee(cls, name, email, phone, address, image, course, password):
-        Trainee.objects.create(name=name, email=email, phone=phone,address=address ,image=image, course=course, password=password)
+    def add_trainee(cls, username, email, phone, address, image, course, password):
+        Trainee.objects.create(username=username, email=email, phone=phone,address=address ,image=image, course=course, password=password)
 
     @classmethod
-    def update_trainee(cls, trainee_id, name, email, phone, address, image, course):
+    def update_trainee(cls, trainee_id, username, email, phone, address, image, course):
         cls.objects.filter(id=trainee_id).update(
-            name=name,
+            username=username,
             email=email,
             phone=phone,
             address=address,
@@ -48,4 +48,4 @@ class Trainee(models.Model):
         return check_password(raw_password, self.password)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.username}"

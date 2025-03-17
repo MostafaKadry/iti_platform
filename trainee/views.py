@@ -9,13 +9,12 @@ import os
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views import View
-
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-@method_decorator(login_required, name='dispatch')
-class TraineeListView(ListView):
+
+class TraineeListView(LoginRequiredMixin, ListView):
     model = Trainee
     template_name = 'retrive_trainee.html'
     context_object_name = 'data'
@@ -26,11 +25,9 @@ class TraineeListView(ListView):
 
 # Class Based View
 
-class TraineeCreateView(View):
+class TraineeCreateView(LoginRequiredMixin, View):
     template_name = 'add_trainee.html'
     success_url = reverse_lazy('get_trainee')
-
-    @login_required()
     def get(self, request):
         courses = Course.get_all_courses()
         return render(request, self.template_name, {"courses": courses})
@@ -40,7 +37,7 @@ class TraineeCreateView(View):
 
         if enrolled_course_id:
             enrolled_course = Course.get_course_by_id(enrolled_course_id)
-            Trainee.add_trainee(name=request.POST.get('name'),
+            Trainee.add_trainee(username=request.POST.get('username'),
                                 email=request.POST.get('email'),
                                 password=request.POST.get('password'),
                                 phone=request.POST.get('phone'),
@@ -49,7 +46,7 @@ class TraineeCreateView(View):
                                 course=enrolled_course)
 
 
-            user = authenticate(email=request.POST.get('email'),
+            user = authenticate(username=request.POST.get('username'),
                                 password=request.POST.get('password'))
             if user is not None:
                 login(request, user)
@@ -73,7 +70,7 @@ class TraineeCreateView(View):
 
 
 # Generic view
-class TraineeDeleteView(DeleteView):
+class TraineeDeleteView(LoginRequiredMixin, DeleteView):
     model = Trainee
     success_url = reverse_lazy('get_trainee')
 
@@ -95,7 +92,7 @@ class TraineeDeleteView(DeleteView):
 #         return redirect('get_trainee')
 #     return HttpResponse("failed", status=400)
 
-class TraneeUpdateView(UpdateView):
+class TraneeUpdateView(LoginRequiredMixin, UpdateView):
     model = Trainee
     success_url = reverse_lazy('get_trainee')
     template_name = 'update_trainee.html'
@@ -107,7 +104,7 @@ class TraneeUpdateView(UpdateView):
     def post(self, request, id):
         trainee = get_object_or_404(Trainee, id=id)
 
-        trainee.name = request.POST.get('name')
+        trainee.username = request.POST.get('username')
         trainee.email = request.POST.get('email')
         trainee.phone = request.POST.get('phone')
         trainee.address = request.POST.get('address')
@@ -136,30 +133,32 @@ class TraneeUpdateView(UpdateView):
 #
 #     return render(request, 'update_trainee.html', {'trainee': trainee})
 
-
+# Login View
 class TraineeLoginView(View):
     def get(self, request):
         context = {"form": LoginForm()}
         return render(request, 'login_trainee.html', context)
 
     def post(self, request):
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
-        print(email, password)
-        user = authenticate(email=email, password=password)
+
         try:
-            logged_user = Trainee.objects.get(email=email)
+            logged_user = Trainee.objects.get(username=username)
             print(logged_user)
+
         except Trainee.DoesNotExist:
             return HttpResponse("Trainee not found", status=401)
 
         if logged_user.check_password(password):
-            request.session['logged_user'] = logged_user.id
+            user = authenticate(username=username, password=password)
+            request.session.user = logged_user
+            login(request, user)
+            print('logged user: ',request.session.user)
             return redirect('get_trainee')
         else:
             return HttpResponse("Invalid password", status=401)
-
-from django.contrib import messages
+# Logout View
 class TraineeLogoutView(View):
     def post(self, request):
         if request.user.is_authenticated:
